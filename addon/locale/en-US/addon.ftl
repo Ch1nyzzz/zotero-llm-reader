@@ -1,0 +1,14 @@
+startup-begin = LLM Reader is loading
+startup-finish = LLM Reader is ready
+panel-loading = Generating view...
+panel-ready = Ready
+panel-error = Generation failed
+panel-button-refresh = Refresh HTML
+panel-button-note = Save plain note
+panel-button-open = Open HTML
+panel-scope-full = Full text
+panel-scope-highlights = Highlights
+panel-scope-meta = Metadata only
+prefs-title = LLM Reader
+tabpanel-reader-tab-label =
+    .label = LLM Reader

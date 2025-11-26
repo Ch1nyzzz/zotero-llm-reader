@@ -1,0 +1,14 @@
+startup-begin = LLM 阅读器加载中
+startup-finish = LLM 阅读器已就绪
+panel-loading = 正在生成...
+panel-ready = 已完成
+panel-error = 生成失败
+panel-button-refresh = 刷新 HTML
+panel-button-note = 保存为笔记
+panel-button-open = 打开 HTML
+panel-scope-full = 全文
+panel-scope-highlights = 仅高亮
+panel-scope-meta = 仅元数据
+prefs-title = LLM 阅读器
+tabpanel-reader-tab-label =
+    .label = LLM 阅读器
