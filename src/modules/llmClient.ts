@@ -31,29 +31,65 @@ export interface LLMResult {
   raw: any;
 }
 
+export interface ChatMessage {
+  role: "system" | "user" | "assistant";
+  content: string;
+}
+
 const PROVIDER_DEFAULTS: Record<
   LLMProvider,
-  { baseURL: string; model: string; path?: string }
+  { baseURL: string; model: string; models: string[]; path?: string }
 > = {
-  openai: { baseURL: "https://api.openai.com/v1", model: "gpt-4o-mini" },
+  openai: {
+    baseURL: "https://api.openai.com/v1",
+    model: "gpt-4.1",
+    models: ["gpt-4.1", "gpt-4.1-mini", "o4-mini"],
+  },
   gemini: {
     baseURL: "https://generativelanguage.googleapis.com",
-    model: "gemini-1.5-pro",
+    model: "gemini-2.5-flash",
+    models: ["gemini-3-pro-preview", "gemini-2.5-flash", "gemini-2.5-pro"],
     path: "v1beta/models/{model}:generateContent",
   },
-  minimax: { baseURL: "https://api.minimax.io/v1", model: "MiniMax-M2" },
-  moonshot: { baseURL: "https://api.moonshot.ai/v1", model: "kimi-latest" },
-  zhipu: { baseURL: "https://api.z.ai/api/paas/v4", model: "glm-4.6" },
+  minimax: {
+    baseURL: "https://api.minimax.chat/v1",
+    model: "MiniMax-M2",
+    models: ["MiniMax-M2", "abab6.5s-chat", "abab6.5-chat"],
+  },
+  moonshot: {
+    baseURL: "https://api.moonshot.cn/v1",
+    model: "kimi-k2",
+    models: ["kimi-k2", "kimi-latest", "moonshot-v1-128k"],
+  },
+  zhipu: {
+    baseURL: "https://open.bigmodel.cn/api/paas/v4",
+    model: "glm-4.6",
+    models: ["glm-4.6", "glm-4.5", "glm-z1-air"],
+  },
   deepseek: {
-    baseURL: "https://api.deepseek.com",
+    baseURL: "https://api.deepseek.com/v1",
     model: "deepseek-chat",
+    models: ["deepseek-chat", "deepseek-reasoner", "deepseek-coder"],
   },
   qwen: {
-    baseURL: "https://dashscope-intl.aliyuncs.com/compatible-mode/v1",
-    model: "qwen-plus",
+    baseURL: "https://dashscope.aliyuncs.com/compatible-mode/v1",
+    model: "qwen3-max",
+    models: ["qwen3-max", "qwen3-plus", "qwen-plus"],
   },
-  custom: { baseURL: "", model: "" },
+  custom: { baseURL: "", model: "", models: [] },
 };
+
+export function getProviderModels(provider: LLMProvider): string[] {
+  return PROVIDER_DEFAULTS[provider]?.models || [];
+}
+
+export function getProviderDefaultURL(provider: LLMProvider): string {
+  return PROVIDER_DEFAULTS[provider]?.baseURL || "";
+}
+
+export function getProviderDefaultModel(provider: LLMProvider): string {
+  return PROVIDER_DEFAULTS[provider]?.model || "";
+}
 
 function resolvedBaseURL(options: LLMOptions) {
   const base = options.baseURL?.trim();
@@ -190,27 +226,14 @@ function buildMessages(
   ];
 }
 
-export async function summarizeRich(
+export async function summarize(
   payload: ContentPayload,
   prompt: string,
   options: LLMOptions,
 ): Promise<LLMResult> {
   const messages = buildMessages(payload, prompt);
   const req = buildRequest(messages, options);
-  logDebug(options, "summarizeRich request", req.url);
-  const raw = await httpPost(req.url, req.body, req.headers, options.timeoutMs);
-  const text = parseResponse(options.provider, raw);
-  return { text, raw };
-}
-
-export async function summarizePlain(
-  payload: ContentPayload,
-  prompt: string,
-  options: LLMOptions,
-): Promise<LLMResult> {
-  const messages = buildMessages(payload, prompt);
-  const req = buildRequest(messages, options);
-  logDebug(options, "summarizePlain request", req.url);
+  logDebug(options, "summarize request", req.url);
   const raw = await httpPost(req.url, req.body, req.headers, options.timeoutMs);
   const text = parseResponse(options.provider, raw);
   return { text, raw };
@@ -240,4 +263,18 @@ export async function testConnection(
   } catch (err: any) {
     return { ok: false, message: err?.message || String(err) };
   }
+}
+
+/**
+ * 多轮对话接口
+ */
+export async function chat(
+  messages: ChatMessage[],
+  options: LLMOptions,
+): Promise<LLMResult> {
+  const req = buildRequest(messages, options);
+  logDebug(options, "chat request", req.url);
+  const raw = await httpPost(req.url, req.body, req.headers, options.timeoutMs);
+  const text = parseResponse(options.provider, raw);
+  return { text, raw };
 }

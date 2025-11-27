@@ -11,8 +11,10 @@ export type PrefKey =
   | "stream"
   | "scope"
   | "promptRich"
-  | "promptPlain"
+  | "outputLang"
   | "log";
+
+export type OutputLang = "zh" | "en";
 
 export const PREF_DEFAULTS: Record<PrefKey, any> = {
   provider: "openai",
@@ -25,7 +27,7 @@ export const PREF_DEFAULTS: Record<PrefKey, any> = {
   stream: true,
   scope: "full",
   promptRich: "",
-  promptPlain: "",
+  outputLang: "zh",
   log: false,
 };
 
