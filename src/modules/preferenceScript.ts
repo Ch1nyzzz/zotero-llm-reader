@@ -48,6 +48,9 @@ function fillPrefValues() {
   (doc.getElementById(
     `zotero-prefpane-${config.addonRef}-prompt-rich`,
   ) as HTMLTextAreaElement)!.value = getPref("promptRich");
+  (doc.getElementById(
+    `zotero-prefpane-${config.addonRef}-prompt-chat`,
+  ) as HTMLTextAreaElement)!.value = getPref("promptChat");
 }
 
 function updateModelList(provider: LLMProvider) {
@@ -129,6 +132,9 @@ function bindPrefEvents() {
   const promptRichEl = doc.getElementById(
     `zotero-prefpane-${config.addonRef}-prompt-rich`,
   ) as HTMLTextAreaElement | null;
+  const promptChatEl = doc.getElementById(
+    `zotero-prefpane-${config.addonRef}-prompt-chat`,
+  ) as HTMLTextAreaElement | null;
   if (promptRichEl) {
     const savePrompt = () => setPref("promptRich", promptRichEl.value);
     promptRichEl.addEventListener("input", () => {
@@ -136,6 +142,14 @@ function bindPrefEvents() {
       promptDebounceTimer = setTimeout(savePrompt, 500);
     });
     promptRichEl.addEventListener("blur", savePrompt);
+  }
+  if (promptChatEl) {
+    const savePromptChat = () => setPref("promptChat", promptChatEl.value);
+    promptChatEl.addEventListener("input", () => {
+      if (promptDebounceTimer) clearTimeout(promptDebounceTimer);
+      promptDebounceTimer = setTimeout(savePromptChat, 500);
+    });
+    promptChatEl.addEventListener("blur", savePromptChat);
   }
 
   doc

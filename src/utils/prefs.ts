@@ -11,6 +11,7 @@ export type PrefKey =
   | "stream"
   | "scope"
   | "promptRich"
+  | "promptChat"
   | "outputLang"
   | "log";
 
@@ -27,6 +28,7 @@ export const PREF_DEFAULTS: Record<PrefKey, any> = {
   stream: true,
   scope: "full",
   promptRich: "",
+  promptChat: "",
   outputLang: "zh",
   log: false,
 };

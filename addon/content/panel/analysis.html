@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>LLM Reader Analysis</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    MathJax = {
+      tex: {
+        inlineMath: [['$', '$']],
+        displayMath: [['$$', '$$']],
+        processEscapes: true,
+        processEnvironments: true,
+        tags: 'ams'
+      },
+      options: {
+        skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+      },
+      startup: {
+        pageReady: () => {
+          return MathJax.startup.defaultPageReady();
+        }
+      }
+    };
+  </script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js" async></script>
+  <style>
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+      line-height: 1.6;
+      color: #333;
+      background: #fff;
+      padding: 20px;
+      margin: 0;
+    }
+    #content {
+      max-width: 100%;
+    }
+    .loading-placeholder {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 300px;
+      color: #666;
+    }
+    .loading-placeholder .spinner {
+      width: 40px;
+      height: 40px;
+      border: 3px solid #eee;
+      border-top-color: #333;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+      margin-bottom: 16px;
+    }
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+  </style>
+</head>
+<body>
+  <div id="content">
+    <div class="loading-placeholder">
+      <div class="spinner"></div>
+      <p>等待内容加载...</p>
+    </div>
+  </div>
+  <script>
+    const contentEl = document.getElementById("content");
+
+    window.addEventListener("message", (event) => {
+      if (event.data?.type === "renderHTML") {
+        const { html } = event.data;
+        if (html) {
+          if (html.includes("<!DOCTYPE") || html.includes("<html")) {
+            const parser = new DOMParser();
+            const doc = parser.parseFromString(html, "text/html");
+            contentEl.innerHTML = doc.body.innerHTML;
+            // 提取样式文本并创建新的 style 元素（避免跨文档组节点问题）
+            const styles = doc.querySelectorAll("head style");
+            styles.forEach(style => {
+              const newStyle = document.createElement("style");
+              newStyle.textContent = style.textContent;
+              document.head.appendChild(newStyle);
+            });
+          } else {
+            contentEl.innerHTML = html;
+          }
+          if (window.MathJax?.typesetPromise) {
+            MathJax.typesetPromise([contentEl]).catch(err => {
+              console.error("MathJax error:", err);
+            });
+          }
+        }
+      }
+    });
+
+    window.parent?.postMessage({ type: "analysisReady" }, "*");
+  </script>
+</body>
+</html>

@@ -33,6 +33,7 @@ export type FluentMessageId =
   | 'pref-output-lang'
   | 'pref-output-lang-en'
   | 'pref-output-lang-zh'
+  | 'pref-prompt-chat'
   | 'pref-prompt-rich'
   | 'pref-provider'
   | 'pref-provider-custom'

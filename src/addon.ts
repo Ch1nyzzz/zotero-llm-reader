@@ -14,7 +14,7 @@ class Addon {
     };
     panel?: {
       currentItemID?: number;
-      currentHTMLPath?: string;
+      currentHTMLContent?: string;
     };
     prefs?: {
       window: Window;

@@ -11,16 +11,15 @@ panel-scope-full = Full text
 panel-scope-highlights = Highlights
 panel-scope-meta = Metadata only
 prefs-title = LLM Reader
-tabpanel-reader-tab-label =
-    .label = LLM Reader
+tabpanel-reader-tab-label = LLM Reader
 tab-loading-title = Analyzing Paper...
 tab-loading-subtitle = LLM is generating an interactive summary
 panel-click-to-analyze = Click the analyze button to start AI analysis
 panel-analyzing = AI is analyzing...
+pref-prompt-chat = Chat system prompt (plain text)
 
 # Chat panel
-tabpanel-chat-tab-label =
-    .label = Chat
+tabpanel-chat-tab-label = Chat
 panel-chat-ready = Ready to chat
 panel-button-clear-chat =
     .tooltiptext = Clear chat history
